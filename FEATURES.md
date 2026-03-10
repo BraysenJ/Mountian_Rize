@@ -44,14 +44,23 @@ chmod +x run.sh
 | Caribou | 110 | 12 | 10 | 8 | Defense |
 
 ### ✅ Combat System
-- Turn-based battles with strategic depth
-- Three action types:
-  - Attack (with critical hit chance: 15%)
-  - Defend (temporary defense boost)
-  - Heal (recover 30 HP)
-- Enemy AI with varied attack patterns
-- Damage calculation with randomization
-- Combat continues until player or enemy is defeated
+- **Full party combat**: All 3 characters fight together with AI companions
+- **Player-controlled main character** with two intelligent NPC companions
+- **Three action types**:
+  - Attack (with 15% critical hit chance for 1.5x damage)
+  - Defend (temporary defense boost for the round)
+  - Heal (restores HP to entire party)
+- **Intelligent AI companions**:
+  - Aleksandr: Balanced fighter, attacks and defends
+  - Temüjin: Defensive specialist with healing focus
+  - Companions adapt to combat conditions (heal when needed, defend when low)
+- **Enemy mechanics**:
+  - Scales with territory progression
+  - Targets party members randomly
+  - Varied attack patterns
+- **Damage calculation** with randomization for unpredictability
+- **Defense system**: Temporary defense reduces incoming damage
+- **Combat continues** until enemy is defeated or all party members fall
 
 ### ✅ RPG Progression
 - Experience point system
@@ -68,8 +77,13 @@ chmod +x run.sh
 3. **Ural Mountains** - Advanced challenges
 4. **Lake Baikal** - Powerful enemies
 5. **Altai Mountains** - End-game bosses
+6. **Kamchatka Volcanoes** - Volcanic realm, fire-themed battles
+7. **Siberian Fortress** - Military stronghold, armored defenders
+8. **Khangai Mountains** - Mystical peaks, spiritual enemies
+9. **Gobi Desert** - Ancient desert, mythical guardians
+10. **Sakha Tundra** - Frozen wastes, ultimate ice lords
 
-### ✅ Enemy Variety (15+ different enemy types)
+### ✅ Enemy Variety (30+ different enemy types)
 **Siberian Pass:**
 - Mountain Bandit (40 HP)
 - Cossack Raider (50 HP)
@@ -95,6 +109,31 @@ chmod +x run.sh
 - Wolf Pack Leader (55 HP)
 - Black Dragon Guardian (100 HP)
 
+**Kamchatka Volcanoes:** ⭐ NEW
+- Volcanic Elemental (75 HP)
+- Lava Drake (85 HP)
+- Inferno Titan (110 HP)
+
+**Siberian Fortress:** ⭐ NEW
+- Iron Guard Captain (70 HP)
+- Siege Knight (80 HP)
+- War Golem (120 HP)
+
+**Khangai Mountains:** ⭐ NEW
+- Spirit Warrior (65 HP)
+- Sky Shaman (75 HP)
+- Celestial Dragon (105 HP)
+
+**Gobi Desert:** ⭐ NEW
+- Sand Bandit (60 HP)
+- Desert Warlord (85 HP)
+- Sphinx Guardian (115 HP)
+
+**Sakha Tundra:** ⭐ NEW
+- Permafrost Walker (70 HP)
+- Blizzard Wraith (90 HP)
+- Eternal Winter Lord (130 HP)
+
 ### ✅ Game Flow
 - 20 turns maximum
 - 70% encounter rate when traveling
@@ -111,22 +150,27 @@ chmod +x run.sh
 - Party health overview
 
 ### ✅ Party Management
-- Heal all party members with "Rest" action
-- Individual status viewing
-- Character level tracking
-- Shared rest benefits (50 HP recovery)
+- **All three characters actively fight** in every battle
+- **Player controls main character** each turn
+- **Two NPC companions** fight with intelligent AI
+- **Shared healing** - heal action restores entire party HP
+- **Unified experience** - all party members gain XP from victories
+- **Individual level tracking** - each character levels independently
+- **Rest action** - heals all party members simultaneously (50 HP recovery)
+- **Party status display** - see all three allies' HP and status at once
 
 ---
 
 ## 🎯 Game Objectives
 
 ### Primary Goal
-Conquer 20 territories across 5 mountain regions
+Conquer 20 territories across 10 mountain regions
 
 ### Secondary Goals
 - Level up all characters
 - Survive all 20 turns
-- Defeat the Black Dragon Guardian
+- Defeat the mightiest bosses (War Golem, Sphinx Guardian, Eternal Winter Lord)
+- Explore all 10 regions
 - Build your legend
 
 ---
@@ -134,11 +178,13 @@ Conquer 20 territories across 5 mountain regions
 ## 🎓 How to Win
 
 1. **Start** in Siberian Pass with weak enemies
-2. **Gain XP** and level up (reach Level ~ 5-6)
+2. **Gain XP** and level up (reach Level ~ 8-10)
 3. **Progress** through regions systematically
 4. **Build Power** with each level increase
-5. **Challenge** Altai Mountains boss battles
-6. **Achieve** 20 territories conquered
+5. **Challenge** mid-tier regions (Ural, Lake Baikal, Altai)
+6. **Master** end-game regions (Kamchatka, Fortress, Khangai, Desert, Tundra)
+7. **Defeat** ultimate bosses (War Golem, Sphinx Guardian, Eternal Winter Lord)
+8. **Achieve** 20+ territories conquered and legendary status!
 
 ---
 
@@ -156,13 +202,15 @@ Edit `config.py` to adjust:
 
 ## 📊 Game Statistics
 
-- **Total Code Lines**: ~320 (game.py)
-- **Total Enemies**: 15+
-- **Total Regions**: 5
+- **Total Code Lines**: ~380 (game.py)
+- **Total Enemies**: 30+
+- **Total Regions**: 10 (5 original + 5 NEW)
 - **Max Characters**: 3 (1 player, 2 NPC)
 - **Mount Options**: 3
 - **Combat Actions**: 3
 - **Menu Options**: 5 main, multiple sub-menus
+- **Highest Enemy HP**: 130 (Eternal Winter Lord)
+- **Highest Enemy Attack Power**: 29 (Eternal Winter Lord)
 
 ---
 
@@ -284,7 +332,12 @@ Repeat until: Turn 20 or Game Over
 | Mongolian Plateau | Easy | 50 | 3-4 |
 | Ural Mountains | Medium | 55 | 5-7 |
 | Lake Baikal | Hard | 60 | 8-10 |
-| Altai Mountains | Very Hard | 75+ | 11+ |
+| Altai Mountains | Very Hard | 75 | 11-12 |
+| Kamchatka Volcanoes | Extreme | 90 | 13-14 |
+| Siberian Fortress | Extreme | 90 | 14-15 |
+| Khangai Mountains | Extreme | 82 | 15-16 |
+| Gobi Desert | Extreme | 87 | 16-17 |
+| Sakha Tundra | Legendary | 97 | 17+ |
 
 ---
 

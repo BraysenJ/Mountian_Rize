@@ -11,12 +11,22 @@ Mountain Rise is a text-based adventure game inspired by Oregon Trail, set in th
 - **Caribou**: High Defense (10) and decent HP (110) - Energy efficient
 
 ### Dynamic Combat System
-- **Turn-based combat** with strategic choices:
-  - Attack: Deal damage to enemies
-  - Defend: Increase defense temporarily
-  - Heal: Use medicinal herbs to recover health
-- Damage calculation with randomization for unpredictability
-- Defense reduces incoming damage
+- **Turn-based combat with 3-character party**:
+  - Player controls the main character each turn
+  - Two NPC companions (Aleksandr, Temüjin) use intelligent AI
+  - All three characters can attack, defend, or heal
+- **Strategic choices**:
+  - Attack: Deal damage to enemy
+  - Defend: Increase defense for this round (temporary)
+  - Heal: Heal entire party with medicinal magic
+- **Intelligent AI**:
+  - Companions heal when party is low on HP
+  - Companions defend when their own HP is low
+  - Companions prioritize attacking otherwise
+- **Party-based damage**: All three characters contribute to combat
+- **Defense system**: Temporary defense boosts reduce incoming damage
+- **Enemy targeting**: Enemies randomly target party members
+- **Party defeat condition**: Victory only if enemy is defeated before all allies fall
 
 ### RPG Progression System
 - **Experience and Leveling**: Defeat enemies to gain experience
@@ -29,6 +39,11 @@ Mountain Rise is a text-based adventure game inspired by Oregon Trail, set in th
 3. **Ural Mountains** - Mountain Shamans, Yak Herders
 4. **Lake Baikal** - Ice Wizards, Frost Giants
 5. **Altai Mountains** - Eagle Knights, Wolf Packs, Black Dragon Guardian
+6. **Kamchatka Volcanoes** - Volcanic Elementals, Lava Drakes, Inferno Titans
+7. **Siberian Fortress** - Iron Guard Captains, Siege Knights, War Golems
+8. **Khangai Mountains** - Spirit Warriors, Sky Shamans, Celestial Dragons
+9. **Gobi Desert** - Sand Bandits, Desert Warlords, Sphinx Guardians
+10. **Sakha Tundra** - Permafrost Walkers, Blizzard Wraiths, Eternal Winter Lords
 
 ### Enemy Variety
 Different enemies in each region with varying stats and experience rewards. Tougher enemies yield greater rewards!

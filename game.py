@@ -15,6 +15,8 @@ class Character:
         self.max_health = 100
         self.attack_power = 0
         self.defense = 0
+        self.base_defense = 0
+        self.temp_defense_bonus = 0
         self.experience = 0
         self.level = 1
         
@@ -22,6 +24,7 @@ class Character:
         if mount == Mount.MOOSE:
             self.attack_power = 18
             self.defense = 8
+            self.base_defense = 8
             self.health = 120
             self.max_health = 120
             self.mount_name = "Moose"
@@ -29,6 +32,7 @@ class Character:
         elif mount == Mount.HORSE:
             self.attack_power = 15
             self.defense = 6
+            self.base_defense = 6
             self.health = 100
             self.max_health = 100
             self.mount_name = "Horse"
@@ -36,13 +40,15 @@ class Character:
         elif mount == Mount.CARIBOU:
             self.attack_power = 12
             self.defense = 10
+            self.base_defense = 10
             self.health = 110
             self.max_health = 110
             self.mount_name = "Caribou"
             self.speed = 8
     
     def take_damage(self, damage):
-        actual_damage = max(1, damage - self.defense // 2)
+        total_defense = self.defense + self.temp_defense_bonus
+        actual_damage = max(1, damage - total_defense // 2)
         self.health -= actual_damage
         return actual_damage
     
@@ -58,6 +64,7 @@ class Character:
         self.health = self.max_health
         self.attack_power += 5
         self.defense += 2
+        self.base_defense += 2
     
     def gain_experience(self, amount):
         self.experience += amount
@@ -150,87 +157,208 @@ class Game:
                 Enemy("Golden Eagle Knight", 65, 18, 6, 130),
                 Enemy("Wolf Pack Leader", 55, 20, 4, 115),
                 Enemy("Black Dragon Guardian", 100, 25, 8, 200),
+            ],
+            "Kamchatka Volcanoes": [
+                Enemy("Volcanic Elemental", 75, 23, 5, 180),
+                Enemy("Lava Drake", 85, 26, 6, 220),
+                Enemy("Inferno Titan", 110, 28, 7, 280),
+            ],
+            "Siberian Fortress": [
+                Enemy("Iron Guard Captain", 70, 19, 8, 160),
+                Enemy("Siege Knight", 80, 22, 9, 200),
+                Enemy("War Golem", 120, 24, 10, 300),
+            ],
+            "Khangai Mountains": [
+                Enemy("Spirit Warrior", 65, 21, 6, 145),
+                Enemy("Sky Shaman", 75, 24, 5, 190),
+                Enemy("Celestial Dragon", 105, 27, 7, 270),
+            ],
+            "Gobi Desert": [
+                Enemy("Sand Bandit", 60, 20, 4, 140),
+                Enemy("Desert Warlord", 85, 23, 6, 210),
+                Enemy("Sphinx Guardian", 115, 26, 8, 290),
+            ],
+            "Sakha Tundra": [
+                Enemy("Permafrost Walker", 70, 22, 7, 165),
+                Enemy("Blizzard Wraith", 90, 25, 6, 240),
+                Enemy("Eternal Winter Lord", 130, 29, 8, 320),
             ]
         }
         return random.choice(encounters.get(region, encounters["Siberian Pass"]))
     
-    def combat(self, player_char, enemy):
-        """Handle turn-based combat"""
+    def combat(self, enemy):
+        """Handle turn-based combat with all 3 characters"""
         print(f"\n{'='*60}")
-        print(f"⚔️  BATTLE: {player_char.name} ({player_char.mount_name}) vs {enemy.name}")
+        print(f"⚔️  BATTLE: Your Party vs {enemy.name}!")
         print(f"{'='*60}\n")
         
         round_num = 0
-        while player_char.is_alive() and enemy.is_alive():
+        while any(char.is_alive() for char in self.characters) and enemy.is_alive():
             round_num += 1
             print(f"\n--- ROUND {round_num} ---")
-            print(f"{player_char.name}: {player_char.health}/{player_char.max_health} HP")
-            print(f"{enemy.name}: {enemy.health}/{enemy.max_health} HP\n")
             
-            print("Your turn! Actions:")
-            print("1. ⚔️  Attack - Strike with your weapon")
-            print("2. 🛡️  Defend - Brace for impact") 
-            print("3. 🍃 Heal - Use medicinal herbs")
+            # Show party status
+            print("\n📊 PARTY STATUS:")
+            for i, char in enumerate(self.characters, 1):
+                health_bar = "🟩" if char.health > char.max_health * 0.7 else "🟨" if char.health > char.max_health * 0.3 else "🟥"
+                print(f"  [{i}] {char.name} ({char.mount_name}): {char.health}/{char.max_health} HP {health_bar}")
             
-            action = input("Choose (1-3): ").strip()
+            print(f"\n🐉 ENEMY: {enemy.name}: {enemy.health}/{enemy.max_health} HP\n")
             
-            # Player turn
-            if action == "1":
-                # Check for critical hit
-                crit_chance = random.random()
-                damage = random.randint(int(player_char.attack_power * 0.8), int(player_char.attack_power * 1.2))
-                
-                if crit_chance < 0.15:  # 15% crit chance
-                    damage = int(damage * 1.5)
-                    actual_damage = enemy.take_damage(damage)
-                    print(f"\n⚡ CRITICAL HIT! You strike for {actual_damage} damage!")
-                else:
-                    actual_damage = enemy.take_damage(damage)
-                    print(f"\n✓ You strike for {actual_damage} damage!")
-            elif action == "2":
-                player_char.defense += 3
-                print(f"\n✓ You brace yourself! Defense increased temporarily.")
-            elif action == "3":
-                heal_amount = 30
-                player_char.heal(heal_amount)
-                print(f"\n🍃 You use medicinal herbs and recover {heal_amount} HP!")
+            # Player character turn
+            print("="*60)
+            char = self.characters[0]
+            if not char.is_alive():
+                print(f"⚠️  {char.name} is unconscious and cannot act!")
             else:
-                print("\nYou hesitate...")
+                print(f"🎯 {char.name}'s turn! ({char.mount_name}) - Level {char.level}")
+                print("Actions:")
+                print("1. ⚔️  Attack")
+                print("2. 🛡️  Defend")
+                print("3. 🍃 Heal Party")
+                
+                action = input("Choose (1-3): ").strip()
+                
+                if action == "1":
+                    # Attack
+                    crit_chance = random.random()
+                    damage = random.randint(int(char.attack_power * 0.8), int(char.attack_power * 1.2))
+                    
+                    if crit_chance < 0.15:
+                        damage = int(damage * 1.5)
+                        actual_damage = enemy.take_damage(damage)
+                        print(f"\n⚡ CRITICAL HIT! {char.name} strikes for {actual_damage} damage!")
+                    else:
+                        actual_damage = enemy.take_damage(damage)
+                        print(f"\n✓ {char.name} strikes for {actual_damage} damage!")
+                        
+                elif action == "2":
+                    # Defend
+                    char.temp_defense_bonus = 3
+                    print(f"\n✓ {char.name} braces for impact! Defense +3 this round.")
+                    
+                elif action == "3":
+                    # Heal party
+                    total_heal = 0
+                    for ally in self.characters:
+                        if not ally.is_alive():
+                            continue
+                        heal_amount = 25
+                        old_health = ally.health
+                        ally.heal(heal_amount)
+                        actual_heal = ally.health - old_health
+                        total_heal += actual_heal
+                    print(f"\n🍃 {char.name} uses healing magic! Party recovers {total_heal} total HP!")
+                else:
+                    print(f"\n{char.name} hesitates...")
             
             if not enemy.is_alive():
                 break
             
-            # Enemy turn
-            print(f"\n{enemy.name} counters!")
-            enemy_damage = random.randint(int(enemy.attack * 0.7), int(enemy.attack * 1.3))
-            actual_damage = player_char.take_damage(enemy_damage)
-            print(f"→ You take {actual_damage} damage!")
+            # NPC turns - Companion 1 (Aleksandr)
+            print("\n" + "-"*60)
+            char = self.characters[1]
+            if not char.is_alive():
+                print(f"⚠️  {char.name} is unconscious!")
+            else:
+                # AI: Attack if healthy, defend if damaged, heal if party low
+                avg_party_health = sum(c.health for c in self.characters) / len(self.characters)
+                
+                if avg_party_health < self.characters[0].max_health * 0.4:
+                    # Heal
+                    for ally in self.characters:
+                        if not ally.is_alive():
+                            continue
+                        heal_amount = 20
+                        ally.heal(heal_amount)
+                    print(f"🍃 {char.name} tends to wounded allies! Party recovers HP!")
+                elif char.health < char.max_health * 0.5:
+                    # Defend
+                    char.temp_defense_bonus = 2
+                    print(f"🛡️ {char.name} takes a defensive stance!")
+                else:
+                    # Attack
+                    damage = random.randint(int(char.attack_power * 0.7), int(char.attack_power * 1.1))
+                    actual_damage = enemy.take_damage(damage)
+                    print(f"⚔️  {char.name} attacks for {actual_damage} damage!")
+            
+            if not enemy.is_alive():
+                break
+            
+            # NPC turns - Companion 2 (Temüjin)
+            print("\n" + "-"*60)
+            char = self.characters[2]
+            if not char.is_alive():
+                print(f"⚠️  {char.name} is unconscious!")
+            else:
+                # AI: Attack, defend rotation
+                if char.health < char.max_health * 0.4:
+                    # Heal self
+                    char.heal(25)
+                    print(f"🍃 {char.name} recovers with medicinal herbs!")
+                else:
+                    # Attack
+                    damage = random.randint(int(char.attack_power * 0.7), int(char.attack_power * 1.1))
+                    actual_damage = enemy.take_damage(damage)
+                    print(f"⚔️  {char.name} attacks for {actual_damage} damage!")
+            
+            if not enemy.is_alive():
+                break
+            
+            # Enemy turn - attacks the party
+            print("\n" + "="*60)
+            print(f"🐉 {enemy.name}'s turn!")
+            
+            # Enemy targets random living character
+            living_chars = [c for c in self.characters if c.is_alive()]
+            if living_chars:
+                target = random.choice(living_chars)
+                enemy_damage = random.randint(int(enemy.attack * 0.7), int(enemy.attack * 1.3))
+                actual_damage = target.take_damage(enemy_damage)
+                print(f"→ {enemy.name} attacks {target.name} for {actual_damage} damage!")
+            
+            # Reset defense bonuses at end of round
+            for char in self.characters:
+                char.temp_defense_bonus = 0
             
             time.sleep(0.5)
         
         print(f"\n{'='*60}")
-        if player_char.is_alive():
-            print(f"✓ VICTORY! {player_char.name} defeated {enemy.name}!")
-            experience_gained = enemy.experience_reward
-            player_char.gain_experience(experience_gained)
-            print(f"⭐ Gained {experience_gained} experience!")
-            if player_char.level > 1:
-                print(f"🎉 Level UP! Now level {player_char.level}!")
+        
+        # Check victory/defeat
+        if enemy.is_alive():
+            print(f"✗ DEFEAT! All warriors have fallen...")
+            return False
+        else:
+            print(f"✓ VICTORY! Your party defeated {enemy.name}!")
+            
+            # All living characters gain experience
+            exp_per_char = enemy.experience_reward
+            for char in self.characters:
+                if char.is_alive():
+                    char.gain_experience(exp_per_char)
+                    if char.level > 1:
+                        print(f"🎉 {char.name} leveled up to {char.level}!")
+            
+            print(f"\n⭐ Each character gained {exp_per_char} experience!")
             self.lands_conquered += 1
             return True
-        else:
-            print(f"✗ DEFEAT! {player_char.name} has fallen in battle...")
-            return False
     
     def travel(self):
         """Travel to a new region"""
-        regions = ["Siberian Pass", "Mongolian Plateau", "Ural Mountains", "Lake Baikal", "Altai Mountains"]
+        regions = ["Siberian Pass", "Mongolian Plateau", "Ural Mountains", "Lake Baikal", "Altai Mountains", 
+                   "Kamchatka Volcanoes", "Siberian Fortress", "Khangai Mountains", "Gobi Desert", "Sakha Tundra"]
         region_descriptions = {
             "Siberian Pass": "A narrow mountain pass with jagged peaks towering above...",
             "Mongolian Plateau": "Vast open plains stretching to the horizon...",
             "Ural Mountains": "Ancient mountains shrouded in mist...",
             "Lake Baikal": "The crystalline waters of the world's deepest lake...",
-            "Altai Mountains": "The legendary home of dragons and warriors..."
+            "Altai Mountains": "The legendary home of dragons and warriors...",
+            "Kamchatka Volcanoes": "Volcanic peaks with rivers of molten lava flowing down the slopes...",
+            "Siberian Fortress": "An ancient fortress carved into stone with towering walls...",
+            "Khangai Mountains": "Sacred peaks where the sky touches the earth...",
+            "Gobi Desert": "Endless sands under a burning sun, mysterious and unforgiving...",
+            "Sakha Tundra": "Frozen wasteland where the earth never thaws and spirits roam free..."
         }
         
         print("\n" + "="*60)
@@ -238,10 +366,16 @@ class Game:
         for i, region in enumerate(regions, 1):
             print(f"{i}. {region}")
         
-        choice = input("Select (1-5): ").strip()
-        choice_idx = int(choice) - 1 if choice in ['1', '2', '3', '4', '5'] else 0
+        choice = input(f"Select (1-{len(regions)}): ").strip()
+        try:
+            choice_idx = int(choice) - 1
+            if 0 <= choice_idx < len(regions):
+                self.current_region = regions[choice_idx]
+            else:
+                self.current_region = regions[0]
+        except ValueError:
+            self.current_region = regions[0]
         
-        self.current_region = regions[choice_idx]
         self.turn += 1
         
         print(f"\nYour party rides toward {self.current_region}...")
@@ -254,8 +388,8 @@ class Game:
             print(f"\n⚔️  An enemy appears: {enemy.name}!")
             time.sleep(1)
             
-            # Combat with main character
-            if self.combat(self.characters[0], enemy):
+            # Combat with all three characters
+            if self.combat(enemy):
                 print(f"\n✓ You have conquered {self.lands_conquered} territories!")
             else:
                 self.game_over = True

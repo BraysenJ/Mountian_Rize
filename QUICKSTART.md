@@ -34,12 +34,21 @@ Each turn, choose an action:
 4. **Save Game** - Record your progress
 5. **Quit** - Exit game
 
-### Step 3: Combat
-When you encounter an enemy:
-- **Attack**: Deal random damage (70-130% of attack power)
-  - Critical hit chance: 15% (1.5x damage)
-- **Defend**: Boost defense temporarily, reduce damage taken
-- **Heal**: Recover 30 HP using medicinal herbs
+### Step 3: Combat with Full Party
+When you encounter an enemy, all 3 characters fight together!
+- **Your character**: You control directly, choose an action each turn
+- **Aleksandr** (Horse): AI companion, attacks/defends/heals intelligently
+- **Temüjin** (Caribou): AI companion, defensive focus with healing
+- **Actions available**:
+  - Attack: Deal random damage (70-130% of attack power)
+    - Critical hit chance: 15% (1.5x damage)
+  - Defend: Boost defense temporarily for this round
+  - Heal: Heal entire party (25-30 HP per character)
+- **Enemy mechanics**:
+  - Attacks one random party member per turn
+  - Gets stronger with each encounter
+  - Multiple are needed to defeat tougher foes
+- **Victory**: Defeat enemy before all party members fall
 
 ### Step 4: Progression
 - Win battles = Gain experience + Conquer 1 territory
@@ -77,6 +86,31 @@ When you encounter an enemy:
 - Golden Eagle Knight (65 HP, strong)
 - Wolf Pack Leader (55 HP, fast)
 - Black Dragon Guardian (100 HP, final boss)
+
+### Kamchatka Volcanoes ⭐ NEW
+- Volcanic Elemental (75 HP, fire-infused)
+- Lava Drake (85 HP, flying fire beast)
+- Inferno Titan (110 HP, ultimate fire lord)
+
+### Siberian Fortress ⭐ NEW
+- Iron Guard Captain (70 HP, well-armored)
+- Siege Knight (80 HP, heavy defender)
+- War Golem (120 HP, unstoppable force)
+
+### Khangai Mountains ⭐ NEW
+- Spirit Warrior (65 HP, ethereal fighter)
+- Sky Shaman (75 HP, magical healer)
+- Celestial Dragon (105 HP, divine beast)
+
+### Gobi Desert ⭐ NEW
+- Sand Bandit (60 HP, swift striker)
+- Desert Warlord (85 HP, ruthless leader)
+- Sphinx Guardian (115 HP, ancient protector)
+
+### Sakha Tundra ⭐ NEW
+- Permafrost Walker (70 HP, frozen warrior)
+- Blizzard Wraith (90 HP, icy phantom)
+- Eternal Winter Lord (130 HP, ice incarnate)
 
 ---
 

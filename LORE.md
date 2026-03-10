@@ -89,6 +89,76 @@ The Altai Mountains are the most formidable obstacle - home to the greatest warr
 
 ---
 
+### 6. Kamchatka Volcanoes ⭐ NEW
+**Where Fire Meets Earth**
+
+The volcanic peaks of Kamchatka spew rivers of molten lava and ash. Here, fire elementals and dragon-like beings roam freely. The very ground is hot, and the air shimmers with heat and danger.
+
+**Key Enemies:**
+- Volcanic Elementals (embodied fire)
+- Lava Drakes (flying fire beasts)
+- **Inferno Titans** (masters of flame)
+
+**Lore**: Ancient legends speak of fire gods dwelling in these mountains, demanding sacrifice from those who enter their domain.
+
+---
+
+### 7. Siberian Fortress ⭐ NEW
+**The Iron Citadel**
+
+An ancient fortress carved directly from stone and iron has stood for centuries, impenetrable and fearless. Its defenders are heavily armored warriors and stone-golems, trained to defend their stronghold to the death.
+
+**Key Enemies:**
+- Iron Guard Captains (well-trained soldiers)
+- Siege Knights (heavy armor, devastating attacks)
+- **War Golems** (animated stone and metal)
+
+**Lore**: The fortress was built by an unknown civilization in ages past. Now it stands as a monument to forgotten military might.
+
+---
+
+### 8. Khangai Mountains ⭐ NEW
+**Sacred Peaks of the Spirit Realm**
+
+The Khangai Mountains are said to be a bridge between the physical world and the spirit world. Shamans gather here for sacred rituals, and mystical beings walk freely.
+
+**Key Enemies:**
+- Spirit Warriors (ethereal fighters)
+- Sky Shamans (spiritual healers turned to darkness)
+- **Celestial Dragons** (divine beings corrupted)
+
+**Lore**: The mountains are sacred ground. Many say that spirits guide those pure of heart and punish the wicked.
+
+---
+
+### 9. Gobi Desert ⭐ NEW
+**The Ancient Sands**
+
+The vast Gobi Desert stretches endlessly under a merciless sun. Within these ancient sands lie the ruins of lost civilizations and the guardians placed to protect their secrets.
+
+**Key Enemies:**
+- Sand Bandits (desert nomads)
+- Desert Warlords (masters of the sands)
+- **Sphinx Guardian** (eternal keeper of ancient secrets)
+
+**Lore**: Archaeologists claim entire cities lie buried beneath the dunes. The Sphinx was placed here eons ago to guard forbidden knowledge.
+
+---
+
+### 10. Sakha Tundra ⭐ NEW
+**The Frozen Heart of the World**
+
+At the edge of the known world lies the Sakha Tundra, where the earth never thaws and winter reigns eternally. Here, the greatest ice lords command blizzards and control the very cold itself.
+
+**Key Enemies:**
+- Permafrost Walkers (adapted to endless winter)
+- Blizzard Wraiths (spirits of deadly storms)
+- **Eternal Winter Lord** (ice incarnate, the ultimate challenge)
+
+**Lore**: Many say the Tundra is where the world ends. Few have ventured there and returned. Those who do speak of a great presence that watches over the frozen lands.
+
+---
+
 ## Character Classes: The Three Mounts
 
 ### The Moose Warriors
