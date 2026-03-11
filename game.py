@@ -1,6 +1,7 @@
 import random
 import time
 from enum import Enum
+import config
 
 class Mount(Enum):
     MOOSE = 1
@@ -19,6 +20,8 @@ class Character:
         self.temp_defense_bonus = 0
         self.experience = 0
         self.level = 1
+        self.potions = 1  # each character starts with a healing potion
+        self.weapon = None  # assigned for recruits
         
         # Mount bonuses
         if mount == Mount.MOOSE:
@@ -72,19 +75,32 @@ class Character:
             self.level_up()
             self.experience = 0
     
+    def use_potion(self):
+        """Consume a healing potion if available."""
+        if self.potions > 0:
+            self.potions -= 1
+            heal_amt = config.POTION_HEAL_AMOUNT
+            self.heal(heal_amt)
+            return heal_amt
+        return 0
+
     def __str__(self):
-        return f"{self.name} (Level {self.level}) - {self.mount_name}\nHP: {self.health}/{self.max_health} | ATK: {self.attack_power} | DEF: {self.defense}"
+        weapon_str = f" | WEAPON: {self.weapon}" if self.weapon else ""
+        return f"{self.name} (Level {self.level}) - {self.mount_name}{weapon_str}\nHP: {self.health}/{self.max_health} | ATK: {self.attack_power} | DEF: {self.defense} | POTIONS: {self.potions}"
 
 class Enemy:
-    def __init__(self, name, health, attack, defense, experience_reward):
+    def __init__(self, name, health, attack, defense, experience_reward, troops=1):
+        # health provided is per-troop base; total health scales with troops
         self.name = name
-        self.health = health
-        self.max_health = health
+        self.troops = troops
+        self.health = health * troops
+        self.max_health = health * troops
         self.attack = attack
         self.defense = defense
         self.experience_reward = experience_reward
     
     def take_damage(self, damage):
+        # simple reduction, troops just influence starting health
         actual_damage = max(1, damage - self.defense // 2)
         self.health -= actual_damage
         return actual_damage
@@ -93,7 +109,7 @@ class Enemy:
         return self.health > 0
     
     def __str__(self):
-        return f"{self.name} - HP: {self.health}/{self.max_health}"
+        return f"{self.name} (Troops: {self.troops}) - HP: {self.health}/{self.max_health}"
 
 class Game:
     def __init__(self):
@@ -103,6 +119,8 @@ class Game:
         self.turn = 0
         self.game_over = False
         self.story_progress = 0
+        # recruited companions will be stored in self.characters alongside the initial party
+        # party cap is calculated based on main character level
         
     def setup_characters(self):
         print("\n" + "="*60)
@@ -131,60 +149,177 @@ class Game:
         print("="*60)
     
     def get_enemy_encounter(self, region):
-        """Generate enemy based on region"""
+        """Generate enemy based on region. Troop counts increase with territory progress."""
+        # define a helper to wrap enemies with troop count
+        def make(name, health, attack, defense, xp):
+            # base troop range has variability from the start and scales upwards
+            base_max = 3  # small groups of enemies even early on
+            extra = self.lands_conquered // 5
+            max_troops = base_max + extra
+            troops = random.randint(1, max(1, max_troops))
+            return Enemy(name, health, attack, defense, xp, troops)
         encounters = {
             "Siberian Pass": [
-                Enemy("Mountain Bandit", 40, 12, 3, 50),
-                Enemy("Cossack Raider", 50, 14, 4, 75),
-                Enemy("Pirate Scout", 35, 10, 2, 40),
+                make("Mountain Bandit", 40, 12, 3, 50),
+                make("Cossack Raider", 50, 14, 4, 75),
+                make("Pirate Scout", 35, 10, 2, 40),
             ],
             "Mongolian Plateau": [
-                Enemy("Mongol Warrior", 55, 16, 5, 100),
-                Enemy("Nomadic Archer", 45, 18, 3, 90),
-                Enemy("Steppe Warlord", 70, 20, 6, 150),
+                make("Mongol Warrior", 55, 16, 5, 100),
+                make("Nomadic Archer", 45, 18, 3, 90),
+                make("Steppe Warlord", 70, 20, 6, 150),
             ],
             "Ural Mountains": [
-                Enemy("Mountain Shaman", 50, 15, 4, 85),
-                Enemy("Yak Herder", 60, 13, 5, 95),
-                Enemy("Avalanche Summoner", 65, 17, 6, 120),
+                make("Mountain Shaman", 50, 15, 4, 85),
+                make("Yak Herder", 60, 13, 5, 95),
+                make("Avalanche Summoner", 65, 17, 6, 120),
             ],
             "Lake Baikal": [
-                Enemy("Ice Wizard", 55, 19, 3, 110),
-                Enemy("Fish Merchant", 40, 11, 2, 60),
-                Enemy("Frost Giant", 80, 22, 7, 160),
+                make("Ice Wizard", 55, 19, 3, 110),
+                make("Fish Merchant", 40, 11, 2, 60),
+                make("Frost Giant", 80, 22, 7, 160),
             ],
             "Altai Mountains": [
-                Enemy("Golden Eagle Knight", 65, 18, 6, 130),
-                Enemy("Wolf Pack Leader", 55, 20, 4, 115),
-                Enemy("Black Dragon Guardian", 100, 25, 8, 200),
+                make("Golden Eagle Knight", 65, 18, 6, 130),
+                make("Wolf Pack Leader", 55, 20, 4, 115),
+                make("Black Dragon Guardian", 100, 25, 8, 200),
             ],
             "Kamchatka Volcanoes": [
-                Enemy("Volcanic Elemental", 75, 23, 5, 180),
-                Enemy("Lava Drake", 85, 26, 6, 220),
-                Enemy("Inferno Titan", 110, 28, 7, 280),
+                make("Volcanic Elemental", 75, 23, 5, 180),
+                make("Lava Drake", 85, 26, 6, 220),
+                make("Inferno Titan", 110, 28, 7, 280),
             ],
             "Siberian Fortress": [
-                Enemy("Iron Guard Captain", 70, 19, 8, 160),
-                Enemy("Siege Knight", 80, 22, 9, 200),
-                Enemy("War Golem", 120, 24, 10, 300),
+                make("Iron Guard Captain", 70, 19, 8, 160),
+                make("Siege Knight", 80, 22, 9, 200),
+                make("War Golem", 120, 24, 10, 300),
             ],
             "Khangai Mountains": [
-                Enemy("Spirit Warrior", 65, 21, 6, 145),
-                Enemy("Sky Shaman", 75, 24, 5, 190),
-                Enemy("Celestial Dragon", 105, 27, 7, 270),
+                make("Spirit Warrior", 65, 21, 6, 145),
+                make("Sky Shaman", 75, 24, 5, 190),
+                make("Celestial Dragon", 105, 27, 7, 270),
             ],
             "Gobi Desert": [
-                Enemy("Sand Bandit", 60, 20, 4, 140),
-                Enemy("Desert Warlord", 85, 23, 6, 210),
-                Enemy("Sphinx Guardian", 115, 26, 8, 290),
+                make("Sand Bandit", 60, 20, 4, 140),
+                make("Desert Warlord", 85, 23, 6, 210),
+                make("Sphinx Guardian", 115, 26, 8, 290),
             ],
             "Sakha Tundra": [
-                Enemy("Permafrost Walker", 70, 22, 7, 165),
-                Enemy("Blizzard Wraith", 90, 25, 6, 240),
-                Enemy("Eternal Winter Lord", 130, 29, 8, 320),
+                make("Permafrost Walker", 70, 22, 7, 165),
+                make("Blizzard Wraith", 90, 25, 6, 240),
+                make("Eternal Winter Lord", 130, 29, 8, 320),
             ]
         }
         return random.choice(encounters.get(region, encounters["Siberian Pass"]))
+
+    def recruit_event(self):
+        """Encounter potential recruits while traveling. You may choose some subject to party cap."""
+        # 25% chance to meet a group of potential recruits
+        if random.random() < 0.25:
+            print("\n🏕️ Along the road you meet a group of fighters seeking a leader.")
+            # decide if potion payment is required to recruit any
+            need_potion = random.random() < 0.3
+            if need_potion:
+                print("They demand a potion in exchange for joining.")
+            # generate between 1 and 3 candidates
+            candidates = []
+            possible_names = ["Boris","Yuri","Mikhail","Oleg","Ivan","Svetlana","Anya","Katya","Nikolai","Dmitri"]
+            random.shuffle(possible_names)
+            for i in range(random.randint(1, 3)):
+                name = possible_names.pop()
+                mount = random.choice(list(Mount))
+                # base recruit stats are weaker than main characters
+                recruit = Character(name, mount)
+                # downgrade stats
+                recruit.max_health = int(recruit.max_health * 0.8)
+                recruit.health = recruit.max_health
+                recruit.attack_power = int(recruit.attack_power * 0.7)
+                recruit.defense = int(recruit.defense * 0.7)
+                recruit.weapon = random.choice(["Sword","Axe","Spear","Bow"])
+                candidates.append(recruit)
+            # display candidates
+            print("Potential recruits:")
+            for idx, rec in enumerate(candidates, 1):
+                print(f"  [{idx}] {rec.name} ({rec.mount_name}) Weapon: {rec.weapon} | HP: {rec.health} | ATK: {rec.attack_power} | DEF: {rec.defense}")
+            # compute party cap
+            cap = self.characters[0].level + 3
+            current_size = len(self.characters)
+            remaining = max(0, cap - current_size)
+            if remaining <= 0:
+                print("Your party is already at capacity; you cannot recruit more.")
+                return
+            print(f"You may recruit up to {remaining} more companions (party cap {cap}).")
+            pick = input("Enter numbers to recruit separated by commas (or none): ").strip()
+            if not pick or pick.lower().startswith('n'):
+                print("You decide not to recruit anyone.")
+                return
+            choices = []
+            for part in pick.split(','):
+                try:
+                    n = int(part.strip())
+                    if 1 <= n <= len(candidates):
+                        choices.append(n-1)
+                except ValueError:
+                    continue
+            selections = []
+            for idx in choices:
+                if len(selections) >= remaining:
+                    break
+                selections.append(candidates[idx])
+            if not selections:
+                print("No valid recruits chosen.")
+                return
+            # check potion cost
+            if need_potion:
+                if self.characters[0].potions > 0:
+                    self.characters[0].potions -= 1
+                    print("You give a potion as payment.")
+                else:
+                    print("You lack a potion, so none will join.")
+                    return
+            # add to party
+            for rec in selections:
+                self.characters.append(rec)
+                print(f"{rec.name} joins your party riding a {rec.mount_name} with a {rec.weapon}!")
+
+    def random_event(self, context="travel"):
+        """Occasionally trigger events that can injure or kill characters.
+        `context` may be 'travel' or 'rest' to vary events."""
+        # roughly 20% chance of something happening
+        if random.random() < 0.2:
+            events = ["avalanche", "blizzard", "ambush", "sickness"]
+            event = random.choice(events)
+            if event == "avalanche":
+                print("\n🌨️ An avalanche thunders down the mountain!")
+                for c in self.characters:
+                    if c.is_alive():
+                        damage = random.randint(20, 50)
+                        c.take_damage(damage)
+                        print(f"  ❄️ {c.name} is hit for {damage} damage!")
+            elif event == "blizzard":
+                print("\n🌬️ A sudden blizzard strikes!")
+                for c in self.characters:
+                    if c.is_alive():
+                        loss = random.randint(10, 30)
+                        c.take_damage(loss)
+                        print(f"  ❄️ {c.name} loses {loss} health to cold!")
+            elif event == "ambush":
+                print("\n🚨 Bandits ambush your party!")
+                victim = random.choice(self.characters)
+                if victim.is_alive():
+                    damage = random.randint(30, 60)
+                    victim.take_damage(damage)
+                    print(f"  ⚔️ {victim.name} was injured for {damage} damage!")
+            elif event == "sickness":
+                print("\n🤒 Your party falls ill from tainted water!")
+                for c in self.characters:
+                    if c.is_alive():
+                        c.health = max(1, c.health - 40)
+                        print(f"  🤢 {c.name} is weakened by illness!")
+            # check for wipe-out
+            if not any(c.is_alive() for c in self.characters):
+                print("\n✗ All members have perished in the catastrophe...")
+                self.game_over = True
     
     def combat(self, enemy):
         """Handle turn-based combat with all 3 characters"""
@@ -216,8 +351,10 @@ class Game:
                 print("1. ⚔️  Attack")
                 print("2. 🛡️  Defend")
                 print("3. 🍃 Heal Party")
+                print(f"4. 🧪 Use Potion ({char.potions} left)")
+                print("5. 💥 Special Attack")
                 
-                action = input("Choose (1-3): ").strip()
+                action = input("Choose (1-5): ").strip()
                 
                 if action == "1":
                     # Attack
@@ -243,12 +380,29 @@ class Game:
                     for ally in self.characters:
                         if not ally.is_alive():
                             continue
-                        heal_amount = 25
+                        heal_amount = config.HEAL_ACTION_AMOUNT  # use config value
                         old_health = ally.health
                         ally.heal(heal_amount)
                         actual_heal = ally.health - old_health
                         total_heal += actual_heal
                     print(f"\n🍃 {char.name} uses healing magic! Party recovers {total_heal} total HP!")
+                elif action == "4":
+                    # Use potion
+                    heal_amt = char.use_potion()
+                    if heal_amt > 0:
+                        print(f"\n🧪 {char.name} drinks a potion and recovers {heal_amt} HP!")
+                    else:
+                        print(f"\n{char.name} has no potions left!")
+                elif action == "5":
+                    # Special attack
+                    if random.random() < 0.5:
+                        damage = random.randint(int(char.attack_power * 1.5), int(char.attack_power * 2))
+                        actual_damage = enemy.take_damage(damage)
+                        print(f"\n🔥 {char.name} unleashes a powerful strike for {actual_damage} damage!")
+                    else:
+                        self_damage = random.randint(5, 15)
+                        char.take_damage(self_damage)
+                        print(f"\n❗Special attack backfires! {char.name} takes {self_damage} damage!")
                 else:
                     print(f"\n{char.name} hesitates...")
             
@@ -269,7 +423,7 @@ class Game:
                     for ally in self.characters:
                         if not ally.is_alive():
                             continue
-                        heal_amount = 20
+                        heal_amount = config.HEAL_ACTION_AMOUNT
                         ally.heal(heal_amount)
                     print(f"🍃 {char.name} tends to wounded allies! Party recovers HP!")
                 elif char.health < char.max_health * 0.5:
@@ -294,7 +448,7 @@ class Game:
                 # AI: Attack, defend rotation
                 if char.health < char.max_health * 0.4:
                     # Heal self
-                    char.heal(25)
+                    char.heal(config.HEAL_ACTION_AMOUNT)
                     print(f"🍃 {char.name} recovers with medicinal herbs!")
                 else:
                     # Attack
@@ -305,6 +459,7 @@ class Game:
             if not enemy.is_alive():
                 break
             
+            
             # Enemy turn - attacks the party
             print("\n" + "="*60)
             print(f"🐉 {enemy.name}'s turn!")
@@ -313,9 +468,11 @@ class Game:
             living_chars = [c for c in self.characters if c.is_alive()]
             if living_chars:
                 target = random.choice(living_chars)
-                enemy_damage = random.randint(int(enemy.attack * 0.7), int(enemy.attack * 1.3))
+                # damage scales with number of troops
+                base_damage = random.randint(int(enemy.attack * 0.7), int(enemy.attack * 1.3))
+                enemy_damage = base_damage * enemy.troops
                 actual_damage = target.take_damage(enemy_damage)
-                print(f"→ {enemy.name} attacks {target.name} for {actual_damage} damage!")
+                print(f"→ {enemy.name} ({enemy.troops} troops) strikes {target.name} for {actual_damage} damage!")
             
             # Reset defense bonuses at end of round
             for char in self.characters:
@@ -342,6 +499,20 @@ class Game:
             
             print(f"\n⭐ Each character gained {exp_per_char} experience!")
             self.lands_conquered += 1
+
+            # chance to find a potion as loot
+            if random.random() < 0.15:  # rarer loot
+                alive_chars = [c for c in self.characters if c.is_alive()]
+                if alive_chars:
+                    finder = random.choice(alive_chars)
+                    finder.potions += 1
+                    print(f"\n🎁 {finder.name} found a healing potion after the battle!")
+
+            # check final boss / win condition
+            if enemy.name == "Eternal Winter Lord" or self.lands_conquered >= 20:
+                print("\n🏆 You have defeated the final threat and conquered the mountains!")
+                self.show_victory()
+                self.game_over = True
             return True
     
     def travel(self):
@@ -382,6 +553,15 @@ class Game:
         print(f"{region_descriptions[self.current_region]}")
         time.sleep(2)
         
+        # random travel events
+        self.random_event(context="travel")
+        if self.game_over:
+            return
+        # possible recruitment opportunity
+        self.recruit_event()
+        if self.game_over:
+            return
+        
         # Random encounter
         if random.random() < 0.7:  # 70% chance of combat
             enemy = self.get_enemy_encounter(self.current_region)
@@ -412,6 +592,7 @@ class Game:
             print(f"    Mount: {char.mount_name} | Level: {char.level}")
             print(f"    HP: {char.health}/{char.max_health} {status}")
             print(f"    ATK: {char.attack_power} | DEF: {char.defense} | EXP: {char.experience}/{char.level * 100}")
+            print(f"    Potions: {char.potions}")
         print()
     
     def save_game(self):
@@ -449,9 +630,13 @@ class Game:
                 self.travel()
             elif choice == "2":
                 for char in self.characters:
-                    char.heal(50)
+                    char.heal(config.REST_ACTION_AMOUNT)  # use config
                 print("\n✓ Your party rests and recovers strength.")
                 self.turn += 1
+                # possibility of mishap while resting
+                if random.random() < 0.2:
+                    print("\n😱 While resting something goes wrong...")
+                    self.random_event(context="rest")
             elif choice == "3":
                 print("\n" + "="*60)
                 print("DETAILED CHARACTER STATS")

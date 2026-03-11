@@ -46,16 +46,22 @@ chmod +x run.sh
 ### ✅ Combat System
 - **Full party combat**: All 3 characters fight together with AI companions
 - **Player-controlled main character** with two intelligent NPC companions
-- **Three action types**:
+- **Multiple action types**:
   - Attack (with 15% critical hit chance for 1.5x damage)
   - Defend (temporary defense boost for the round)
-  - Heal (restores HP to entire party)
+  - Heal (restores HP to entire party, now weaker to increase challenge)
+  - Use Potion (heal 50 HP, extremely limited supply)
+  - Special Attack (high-risk, high-reward strike with potential backfire)
+- **Potions**: rare loot drops give extra healing items (about 15% chance)
+- **Enemies now come with variable troop counts**:
+  - Each foe may consist of 1–3 warriors initially; troop size grows as you conquer more lands
+  - Health scales with number of troops, and attack damage is multiplied accordingly for more deadly encounters
 - **Intelligent AI companions**:
   - Aleksandr: Balanced fighter, attacks and defends
   - Temüjin: Defensive specialist with healing focus
   - Companions adapt to combat conditions (heal when needed, defend when low)
 - **Enemy mechanics**:
-  - Scales with territory progression
+  - Scales with territory progression and troop count
   - Targets party members randomly
   - Varied attack patterns
 - **Damage calculation** with randomization for unpredictability
@@ -137,8 +143,11 @@ chmod +x run.sh
 ### ✅ Game Flow
 - 20 turns maximum
 - 70% encounter rate when traveling
+- **Travel events**: aside from enemies and hazards, you may encounter villagers or mercenaries to recruit companions (25% chance each travel)
+- Encounters grow harder as territories are claimed: expect more troops and stronger foes
+- Random environmental hazards (avalanches, blizzards, ambushes, sickness) can injure or kill party members — another way to die
 - Territory conquest: 1 per victory
-- Victory condition: 20+ territories conquered
+- Victory condition: 20+ territories conquered **or defeat of the final boss (Eternal Winter Lord)**
 - Progression tracking with visual indicators
 
 ### ✅ User Interface

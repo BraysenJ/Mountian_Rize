@@ -21,9 +21,11 @@ STARTING_HEALTH_CARIBOU = 110
 BASE_EXP_MULTIPLIER = 1.0
 LEVEL_UP_EXP_BASE = 100
 
-# Healing amounts
-HEAL_ACTION_AMOUNT = 30
-REST_ACTION_AMOUNT = 50
+# Healing amounts (tweak to adjust difficulty)
+HEAL_ACTION_AMOUNT = 20   # amount restored by the heal action in combat
+REST_ACTION_AMOUNT = 30   # amount restored when resting
+POTION_HEAL_AMOUNT = 50   # amount a potion heals
 
 # Difficulty scaling
 ENEMY_SCALING_PER_TURN = 1.05  # Enemies get 5% stronger each turn
+TROOP_BASE_MAX = 3          # base maximum troops an enemy group can have

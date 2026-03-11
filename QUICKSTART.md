@@ -28,14 +28,14 @@ chmod +x run.sh
 
 ### Step 2: Main Gameplay Loop
 Each turn, choose an action:
-1. **Travel** - Go to a new region, encounter enemies
+1. **Travel** - Go to a new region, encounter enemies (and occasionally meet recruits you can add to your party)
 2. **Rest** - Heal all characters by 50 HP
-3. **View Stats** - Check detailed character information
+3. **View Stats** - Check detailed character information (recruits will appear here)
 4. **Save Game** - Record your progress
 5. **Quit** - Exit game
 
 ### Step 3: Combat with Full Party
-When you encounter an enemy, all 3 characters fight together!
+When you encounter an enemy, all characters in your party fight together! Recruited companions participate just like your original allies.
 - **Your character**: You control directly, choose an action each turn
 - **Aleksandr** (Horse): AI companion, attacks/defends/heals intelligently
 - **Temüjin** (Caribou): AI companion, defensive focus with healing
@@ -115,7 +115,9 @@ When you encounter an enemy, all 3 characters fight together!
 ---
 
 ## Strategy Tips
+- Keep an eye on party size and level. You can only have as many companions as your level allows plus the original three.
 
+### Combat Strategy
 ### Combat Strategy
 1. **Early Battles**: Use Attack to finish quickly
 2. **Low HP**: Use Heal action to recover
